@@ -1,574 +1,750 @@
 <!DOCTYPE html>
+
 <html lang="de">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nicolas Romig</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#090b0f;--bg2:#0e1117;--line:rgba(255,255,255,0.06);
-      --text:#e8eaf0;--muted:#4a5060;--subtle:#1e293b;
-      --accent:#c8f060;--blue:#60a5fa;--purple:#c084fc;
-      --orange:#fb923c;--green:#4ade80;--teal:#2dd4bf;--yellow:#facc15;
-    }
-    html{scroll-behavior:smooth}
-    body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
-    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5}
-    .grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 50% at 50% 0%,black 20%,transparent 100%)}
-    #root{position:relative;z-index:1}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-    .fu{animation:fadeUp .5s ease both}
-    input{outline:none}
-    button{cursor:pointer;font-family:'Syne',sans-serif}
-    ::-webkit-scrollbar{width:3px}
-    ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:2px}
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nicolas Romig</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#090b0f;--bg2:#0e1117;--bg3:#131820;
+  --line:rgba(255,255,255,0.06);--line2:rgba(255,255,255,0.1);
+  --text:#e8eaf0;--muted:#4a5060;--sub:#94a3b8;
+  --accent:#c8f060;--blue:#60a5fa;--purple:#c084fc;
+  --orange:#fb923c;--green:#4ade80;--red:#f87171;--teal:#2dd4bf;
+  --serif:'DM Serif Display',Georgia,serif;
+  --mono:'DM Mono',monospace;
+  --sans:'Syne',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+
+/* NOISE + GRID */
+body::before{content:’’;position:fixed;inset:0;opacity:.3;pointer-events:none;z-index:0;
+background-image:url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=’.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’ opacity=’.05’/%3E%3C/svg%3E”)}
+.grid-bg{position:fixed;inset:0;z-index:0;
+background-image:linear-gradient(var(–line) 1px,transparent 1px),linear-gradient(90deg,var(–line) 1px,transparent 1px);
+background-size:60px 60px;
+mask-image:radial-gradient(ellipse 80% 50% at 50% 0%,black 20%,transparent 100%)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* ── LANDING ── */
+#landing{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 24px 60px}
+.eyebrow{font-family:var(–mono);font-size:11px;letter-spacing:.2em;color:var(–muted);text-transform:uppercase;
+margin-bottom:20px;display:flex;align-items:center;gap:12px;animation:fadeUp .7s ease both}
+.eyebrow::after{content:’’;flex:1;height:1px;background:var(–line)}
+.status-dot{display:inline-flex;align-items:center;gap:6px;font-family:var(–mono);font-size:10px;
+color:var(–muted);padding:4px 10px;border:1px solid var(–line);border-radius:20px;margin-bottom:24px;
+animation:fadeUp .7s .1s ease both}
+.dot{width:6px;height:6px;border-radius:50%;background:var(–accent);animation:pulse 2s ease infinite}
+h1{font-family:var(–serif);font-size:clamp(52px,12vw,84px);line-height:.95;letter-spacing:-.02em;
+animation:fadeUp .7s .15s ease both}
+h1 em{font-style:italic;color:var(–accent)}
+.tagline{font-family:var(–mono);font-size:12px;color:var(–muted);margin-top:20px;line-height:1.7;
+animation:fadeUp .7s .2s ease both}
+.divider{height:1px;background:var(–line);margin:40px 0;animation:fadeUp .7s .25s ease both}
+.section-label{font-family:var(–mono);font-size:10px;letter-spacing:.2em;color:var(–muted);
+text-transform:uppercase;margin-bottom:14px}
+.links{display:flex;flex-direction:column;gap:10px}
+.link-card{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;
+background:var(–bg2);border:1px solid var(–line);border-radius:10px;
+text-decoration:none;color:var(–text);transition:all .2s;cursor:pointer}
+.link-card:hover{border-color:var(–line2);transform:translateX(4px)}
+.link-left{display:flex;align-items:center;gap:14px}
+.link-icon{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,.04);
+border:1px solid var(–line);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.link-title{font-size:14px;font-weight:600}
+.link-sub{font-family:var(–mono);font-size:11px;color:var(–muted);margin-top:2px}
+.link-arrow{font-size:16px;color:var(–muted);transition:transform .2s,color .2s}
+.link-card:hover .link-arrow{transform:translateX(4px);color:var(–accent)}
+.badge{font-family:var(–mono);font-size:9px;padding:2px 7px;border-radius:20px;
+letter-spacing:.1em;text-transform:uppercase;margin-left:8px;vertical-align:middle}
+.badge-green{background:rgba(200,240,96,.12);color:var(–accent);border:1px solid rgba(200,240,96,.2)}
+.lfoot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+padding-top:40px;border-top:1px solid var(–line);margin-top:40px;animation:fadeUp .7s .4s ease both}
+.lfoot span{font-family:var(–mono);font-size:10px;color:var(–muted)}
+
+/* ── PASSWORD MODAL ── */
+#pw-modal{display:none;position:fixed;inset:0;z-index:100;
+background:rgba(9,11,15,.96);backdrop-filter:blur(12px);
+align-items:center;justify-content:center}
+#pw-modal.open{display:flex}
+.pw-box{background:var(–bg2);border:1px solid var(–line2);border-radius:16px;
+padding:36px 32px;max-width:340px;width:90%;animation:fadeUp .4s ease both}
+.pw-title{font-family:var(–serif);font-size:28px;margin-bottom:6px}
+.pw-title em{font-style:italic;color:var(–accent)}
+.pw-sub{font-family:var(–mono);font-size:11px;color:var(–muted);margin-bottom:24px}
+.pw-input{width:100%;padding:12px 16px;background:var(–bg3);border:1px solid var(–line2);
+border-radius:8px;color:var(–text);font-family:var(–mono);font-size:14px;
+outline:none;letter-spacing:.1em;transition:border-color .2s;margin-bottom:12px}
+.pw-input:focus{border-color:var(–accent)}
+.pw-input.error{animation:shake .3s ease;border-color:var(–red)}
+.pw-btn{width:100%;padding:12px;background:var(–accent);border:none;border-radius:8px;
+color:#000;font-family:var(–sans);font-size:14px;font-weight:700;cursor:pointer;
+transition:opacity .2s;letter-spacing:.02em}
+.pw-btn:hover{opacity:.85}
+.pw-cancel{display:block;text-align:center;margin-top:12px;font-family:var(–mono);
+font-size:11px;color:var(–muted);cursor:pointer;transition:color .2s}
+.pw-cancel:hover{color:var(–text)}
+.pw-err{font-family:var(–mono);font-size:11px;color:var(–red);text-align:center;
+margin-top:8px;min-height:18px}
+
+/* ── APP ── */
+#app{display:none;position:fixed;inset:0;z-index:50;background:var(–bg);overflow-y:auto}
+#app.open{display:block}
+.app-header{background:var(–bg2);border-bottom:1px solid var(–line);
+padding:16px 20px 0;position:sticky;top:0;z-index:10}
+.app-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.app-title{font-family:var(–serif);font-size:20px}
+.app-title em{font-style:italic;color:var(–accent)}
+.logout-btn{font-family:var(–mono);font-size:10px;color:var(–muted);background:none;
+border:1px solid var(–line);border-radius:6px;padding:4px 10px;cursor:pointer;
+transition:all .2s;letter-spacing:.05em}
+.logout-btn:hover{border-color:var(–line2);color:var(–text)}
+.tabs{display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab-btn{padding:8px 14px;border:none;background:none;cursor:pointer;
+font-family:var(–sans);font-size:12px;font-weight:600;white-space:nowrap;
+color:var(–muted);border-bottom:2px solid transparent;transition:all .15s}
+.tab-btn.active{color:var(–text);border-bottom-color:var(–accent)}
+.app-body{padding:20px;max-width:680px;margin:0 auto}
+
+/* ── SHARED COMPONENTS ── */
+.section-head{font-family:var(–mono);font-size:10px;letter-spacing:.2em;color:var(–muted);
+text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-head::after{content:’’;flex:1;height:1px;background:var(–line)}
+.card{background:var(–bg2);border:1px solid var(–line);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.card-accent{border-color:rgba(200,240,96,.2);background:rgba(200,240,96,.03)}
+
+/* ── DASHBOARD ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
+.kpi{background:var(–bg2);border:1px solid var(–line);border-radius:10px;padding:14px 12px;text-align:center;position:relative;overflow:hidden}
+.kpi::after{content:’’;position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.c-green::after{background:var(–green)}
+.kpi.c-blue::after{background:var(–blue)}
+.kpi.c-purple::after{background:var(–purple)}
+.kpi.c-orange::after{background:var(–orange)}
+.kpi.c-teal::after{background:var(–teal)}
+.kpi.c-pink::after{background:#f472b6}
+.kpi-val{font-family:var(–mono);font-size:20px;font-weight:500;margin-bottom:2px}
+.kpi-lbl{font-size:10px;color:var(–muted);font-family:var(–mono)}
+.kpi-sub{font-size:9px;color:var(–muted);margin-top:2px;font-family:var(–mono)}
+.bar-row{margin-bottom:10px}
+.bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;font-family:var(–mono)}
+.bar-track{height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.prog-item{display:flex;justify-content:space-between;align-items:center;
+padding:8px 0;border-bottom:1px solid var(–line);font-size:12px}
+.prog-item:last-child{border:none}
+.prog-week{font-family:var(–mono);font-size:10px;color:var(–muted);min-width:70px}
+.prog-status{font-size:10px;color:var(–muted)}
+
+/* ── TRAINING ── */
+.session-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.sess-btn{padding:12px 14px;border-radius:10px;border:1.5px solid var(–line);
+background:var(–bg2);cursor:pointer;text-align:left;transition:all .15s;color:var(–text)}
+.sess-btn.active{border-color:var(–accent);background:rgba(200,240,96,.06)}
+.sess-name{font-size:13px;font-weight:700;font-family:var(–sans)}
+.sess-focus{font-size:10px;color:var(–muted);margin-top:2px;font-family:var(–mono)}
+.session-note{border-radius:8px;padding:10px 14px;margin-bottom:16px;
+font-size:12px;color:var(–sub);line-height:1.6}
+.ex-card{border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid var(–line)}
+.ex-card.priority{border-color:rgba(200,240,96,.3);background:rgba(200,240,96,.04)}
+.ex-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.ex-name{font-size:13px;font-weight:600}
+.ex-name.pri{color:var(–accent)}
+.ex-meta{font-size:10px;color:var(–muted);margin-top:2px;font-family:var(–mono)}
+.ex-done{font-family:var(–mono);font-size:11px;font-weight:700}
+.set-row{display:flex;gap:6px;flex-wrap:wrap}
+.set-btn{width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;
+font-size:12px;font-weight:700;transition:all .15s}
+.set-btn.done{background:var(–accent);color:#000}
+.set-btn.undone{background:#1e293b;color:var(–muted)}
+.done-label{font-size:11px;color:var(–green);align-self:center;margin-left:4px}
+.reset-btn{width:100%;padding:10px;border-radius:8px;border:1px solid var(–line);
+background:none;color:var(–muted);font-size:12px;cursor:pointer;margin-top:8px;font-family:var(–mono)}
+
+/* ── MEAL PREP ── */
+.meal-card{margin-bottom:8px}
+.meal-header{display:flex;align-items:center;gap:12px;padding:14px;
+background:var(–bg2);border:1px solid var(–line);border-radius:10px;cursor:pointer;transition:all .2s}
+.meal-header.open{border-radius:10px 10px 0 0;border-color:var(–line2);background:var(–bg3)}
+.meal-icon-wrap{width:40px;height:40px;border-radius:10px;background:#1e293b;
+display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.meal-time{font-family:var(–mono);font-size:11px;color:var(–blue);font-weight:500}
+.meal-name{font-size:13px;font-weight:700;margin-top:1px}
+.meal-macro{font-family:var(–mono);font-size:10px;color:var(–muted);margin-top:1px}
+.meal-kcal{font-family:var(–mono);font-size:13px;font-weight:500;color:var(–sub);margin-left:auto;flex-shrink:0}
+.meal-expand{color:var(–muted);font-size:14px;margin-left:8px;transition:transform .2s;flex-shrink:0}
+.meal-header.open .meal-expand{transform:rotate(180deg)}
+.meal-body{display:none;background:var(–bg3);border:1px solid var(–line2);
+border-top:none;border-radius:0 0 10px 10px;padding:14px}
+.meal-body.open{display:block}
+.opt-tabs{display:flex;gap:6px;margin-bottom:12px}
+.opt-tab{padding:4px 12px;border-radius:20px;border:none;cursor:pointer;font-size:11px;font-weight:600;transition:all .15s}
+.opt-tab.active{background:var(–blue);color:#000}
+.opt-tab.inactive{background:#1e293b;color:var(–muted)}
+.ingredient-list{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.ingredient{font-size:11px;padding:3px 8px;background:#1e293b;border-radius:5px;color:var(–sub)}
+.prep-text{font-size:12px;color:var(–sub);line-height:1.6;margin-bottom:8px}
+.ninja-tip{background:#0f2a1a;border:1px solid rgba(74,222,128,.2);border-radius:7px;
+padding:8px 12px;font-size:11px;color:var(–green);display:flex;gap:8px;line-height:1.5}
+.macro-line{font-family:var(–mono);font-size:10px;color:var(–muted);margin-top:10px}
+.step-card{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;
+background:var(–bg2);border:1px solid var(–line);border-radius:10px;margin-bottom:8px;transition:opacity .2s}
+.step-card.done-card{opacity:.5}
+.step-check{width:34px;height:34px;border-radius:8px;border:none;cursor:pointer;
+display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;transition:all .2s}
+.step-check.undone{background:#1e293b;color:var(–muted)}
+.step-check.done-chk{background:#14532d;color:var(–green)}
+.step-title{font-size:13px;font-weight:700}
+.step-qty{font-size:10px;color:var(–muted);font-family:var(–mono);margin-top:2px}
+.step-ninja{background:#0f2a1a;border-radius:6px;padding:6px 10px;
+font-size:11px;color:var(–green);margin-top:8px;line-height:1.5}
+.step-tip{font-size:11px;color:var(–muted);margin-top:6px;line-height:1.5}
+.step-dur{font-size:10px;font-family:var(–mono);padding:2px 7px;border-radius:6px;
+margin-left:auto;flex-shrink:0;align-self:flex-start;margin-top:2px}
+
+/* ── SUPPLEMENTS ── */
+.toggle-row{display:flex;background:var(–bg2);border:1px solid var(–line);
+border-radius:8px;padding:4px;margin-bottom:16px;gap:2px}
+.toggle-btn{flex:1;padding:8px;border:none;cursor:pointer;border-radius:6px;
+font-size:12px;font-weight:600;transition:all .15s}
+.toggle-btn.active{background:var(–blue);color:#000}
+.toggle-btn.inactive{background:none;color:var(–muted)}
+.schedule-row{display:flex;gap:10px;align-items:flex-start;
+padding:9px 0;border-bottom:1px solid var(–line);font-size:12px}
+.schedule-row:last-child{border:none}
+.sched-time{font-family:var(–mono);font-size:11px;color:var(–blue);min-width:44px;font-weight:500;margin-top:1px}
+.sched-items{flex:1}
+.sched-item{color:var(–sub);margin-bottom:2px}
+.supp-card{display:flex;gap:12px;align-items:flex-start;
+background:var(–bg2);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.supp-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;
+justify-content:center;font-size:18px;flex-shrink:0}
+.supp-name{font-size:13px;font-weight:700}
+.supp-timing{font-size:11px;margin-top:2px;font-family:var(–mono)}
+.supp-why{font-size:11px;color:var(–muted);margin-top:6px;line-height:1.5}
+.pri-badge{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:700;
+letter-spacing:.08em;margin-left:8px;vertical-align:middle;font-family:var(–mono)}
+</style>
+
 </head>
 <body>
 <div class="grid-bg"></div>
-<div id="root"></div>
-<script type="text/babel">
-const {useState,useEffect}=React;
-const {BarChart,Bar,LineChart,Line,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,ReferenceLine,Legend}=Recharts;
-const PW="NR@fit26";
-const C={bg:"#090b0f",bg2:"#0e1117",bg3:"#131820",ln:"rgba(255,255,255,0.06)",ln2:"rgba(255,255,255,0.1)",
-  tx:"#e8eaf0",mt:"#4a5060",sb:"#1e293b",
-  ac:"#c8f060",bl:"#60a5fa",pu:"#c084fc",or:"#fb923c",gr:"#4ade80",te:"#2dd4bf",ye:"#facc15"};
 
-// DATA
-const PLAN={"Upper A":{focus:"Brust + Rücken + Arme",color:"#60a5fa",tag:"Push-Pull",note:"Klimmzüge ZUERST – Schwachstelle. Ziel: 3×8 bis Woche 8.",ex:[
-  {n:"Klimmzüge",s:4,r:"3–6",note:"⚡ Immer als erstes!",pri:true},
-  {n:"Schräge Brustpresse (Maschine)",s:4,r:"8–12",note:"2 Warmup-Sätze"},
-  {n:"Iso-Laterales Rudern von oben",s:3,r:"10–12",note:""},
-  {n:"Flat Chest Press (Maschine)",s:3,r:"8–12",note:""},
-  {n:"Overhead Press (Maschine)",s:3,r:"10–12",note:"🎯 Schulter aufbauen"},
-  {n:"Seitheben (Maschine)",s:3,r:"15–20",note:"Langsam, Kontraktion halten"},
-  {n:"Preacher Curl",s:2,r:"10–12",note:"Superset mit Trizeps ↓"},
-  {n:"Trizepsdrücken (Kabel)",s:2,r:"12–15",note:"Superset mit Bizeps ↑"},
-]},"Lower A":{focus:"Quads + Glutes + Core",color:"#4ade80",tag:"Quad-Dom.",note:"Schwerste Kniebeugen-Variante zuerst. Core nicht weglassen.",ex:[
-  {n:"Gürtelkniebeuge (Maschine)",s:4,r:"8–12",note:"2 Warmup-Sätze"},
-  {n:"Beinstrecken",s:3,r:"10–15",note:"~100 kg · RPE 8"},
-  {n:"Hip Thrust (Maschine)",s:3,r:"10–12",note:"1 Sek. Pause oben"},
-  {n:"Hüftabduktion",s:3,r:"12–15",note:""},
-  {n:"Beinbeugen sitzend",s:3,r:"10–12",note:""},
-  {n:"Wadenheben stehend",s:3,r:"12–15",note:"3 Sek. Exzentrik"},
-  {n:"Kabelzug Crunch",s:3,r:"12–15",note:"Core-Finisher"},
-]},"Upper B":{focus:"Schultern + Rücken + Brust",color:"#c084fc",tag:"Pull-Push",note:"4 Sätze Seitheben – Schultern priorisieren.",ex:[
-  {n:"Klimmzüge / Latzug",s:4,r:"5–8",note:"⚡ Gewichtsgürtel sobald 3×8",pri:true},
-  {n:"Chest Supported T-Bar Row",s:3,r:"8–11",note:""},
-  {n:"Butterfly (Maschine)",s:3,r:"10–15",note:""},
-  {n:"Iso-Laterales Rudern",s:3,r:"10–12",note:""},
-  {n:"Seitheben (Maschine)",s:4,r:"15–20",note:"🎯 4 Sätze!"},
-  {n:"Pullover (Maschine)",s:3,r:"8–12",note:""},
-  {n:"Brust-Dips",s:3,r:"6–10",note:""},
-  {n:"Kabelzug Crunch",s:2,r:"12–15",note:""},
-]},"Lower B":{focus:"Hamstrings + Glutes + Waden",color:"#fb923c",tag:"Ham-Dom.",note:"Glute Ham Raise frisch. Höchstes Hip Thrust Gewicht.",ex:[
-  {n:"Glute Ham Raise",s:3,r:"6–10",note:"⚡ Frisch angehen!",pri:true},
-  {n:"Liegendes Beinbeugen",s:4,r:"8–12",note:"2 Warmup-Sätze"},
-  {n:"Hip Thrust (Maschine)",s:4,r:"10–12",note:"Schwerste der Woche"},
-  {n:"Hüftadduktion",s:3,r:"10–12",note:""},
-  {n:"Beinstrecken",s:2,r:"12–15",note:"Leichter als Lower A"},
-  {n:"Hyperextension",s:3,r:"12–15",note:""},
-  {n:"Wadenheben stehend",s:3,r:"12–15",note:""},
-]}};
+<!-- ── LANDING ── -->
 
-const WEEK=[{d:"Mo",s:"Upper A"},{d:"Di",s:"Lower A"},{d:"Mi",r:true,note:"Aktiv · 8k Schritte"},{d:"Do",s:"Upper B"},{d:"Fr",s:"Lower B"},{d:"Sa",r:true,note:"Spazieren"},{d:"So",r:true,note:"Regeneration 🛌"}];
+<div id="landing">
+  <div class="eyebrow" style="padding-top:48px">nicolasromig.de · 2026</div>
+  <div class="status-dot"><span class="dot"></span> München, Deutschland</div>
+  <h1>Nicolas<br><em>Romig</em></h1>
+  <p class="tagline">// Persönliche Seite & Tools</p>
+  <div class="divider"></div>
+
+  <section style="margin-bottom:32px;animation:fadeUp .7s .3s ease both">
+    <p class="section-label">— Connect</p>
+    <div class="links">
+      <a href="https://www.linkedin.com/in/nicolasromig" target="_blank" class="link-card">
+        <div class="link-left">
+          <div class="link-icon">💼</div>
+          <div><div class="link-title">LinkedIn</div><div class="link-sub">linkedin.com/in/nicolasromig</div></div>
+        </div>
+        <span class="link-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <section style="animation:fadeUp .7s .35s ease both">
+    <p class="section-label">— Persönliche Tools</p>
+    <div class="links">
+      <div class="link-card" onclick="openPwModal()">
+        <div class="link-left">
+          <div class="link-icon">🔒</div>
+          <div>
+            <div class="link-title">Fitness & Health Hub <span class="badge badge-green">Privat</span></div>
+            <div class="link-sub">Training · Meal Prep · Dashboard · Supplements</div>
+          </div>
+        </div>
+        <span class="link-arrow">→</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="lfoot">
+    <span>NICOLAS ROMIG</span>
+    <span>nicolasromig.de · 2026</span>
+  </div>
+</div>
+
+<!-- ── PASSWORD MODAL ── -->
+
+<div id="pw-modal">
+  <div class="pw-box">
+    <div class="pw-title">Zugang<br><em>Privat</em></div>
+    <div class="pw-sub">// Fitness & Health Hub · Passwort erforderlich</div>
+    <input class="pw-input" id="pw-input" type="password" placeholder="Passwort eingeben"
+      onkeydown="if(event.key==='Enter')checkPw()"/>
+    <button class="pw-btn" onclick="checkPw()">Einloggen →</button>
+    <span class="pw-cancel" onclick="closePwModal()">Abbrechen</span>
+    <div class="pw-err" id="pw-err"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+
+<div id="app">
+  <div class="app-header">
+    <div class="app-top">
+      <div class="app-title">Fitness & Health <em>Hub</em></div>
+      <button class="logout-btn" onclick="logout()">← Zurück</button>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard',this)">📊 Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('training',this)">🏋️ Training</button>
+      <button class="tab-btn" onclick="switchTab('meals',this)">🥗 Meal Prep</button>
+      <button class="tab-btn" onclick="switchTab('supplements',this)">💊 Supplements</button>
+    </div>
+  </div>
+  <div class="app-body">
+
+```
+<!-- DASHBOARD -->
+<div id="tab-dashboard">
+  <div style="margin-bottom:24px">
+    <div class="section-head">Aktuelle Stats · Mai 2026</div>
+    <div class="kpi-grid">
+      <div class="kpi c-green"><div class="kpi-val" style="color:var(--green)">7.696</div><div class="kpi-lbl">Ø Schritte</div><div class="kpi-sub">Ziel: 9.000+</div></div>
+      <div class="kpi c-blue"><div class="kpi-val" style="color:var(--blue)">67 bpm</div><div class="kpi-lbl">Ruhepuls Ø</div><div class="kpi-sub">Gut ✓</div></div>
+      <div class="kpi c-purple"><div class="kpi-val" style="color:var(--purple)">44 ms</div><div class="kpi-lbl">HRV Ø</div><div class="kpi-sub">Ziel: 50+</div></div>
+      <div class="kpi c-orange"><div class="kpi-val" style="color:var(--orange)">767</div><div class="kpi-lbl">Akt. kcal/Tag</div><div class="kpi-sub">Ø letzter Monat</div></div>
+      <div class="kpi c-pink"><div class="kpi-val" style="color:#f472b6">95.9 kg</div><div class="kpi-lbl">Gewicht</div><div class="kpi-sub">+1 kg seit Jan</div></div>
+      <div class="kpi c-teal"><div class="kpi-val" style="color:var(--teal)">4×/Wo</div><div class="kpi-lbl">Training</div><div class="kpi-sub">Upper/Lower</div></div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px">
+    <div class="section-head">Muskelgruppen-Balance</div>
+    <div class="card">
+      <div id="muscle-bars"></div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px">
+    <div class="section-head">⚡ Klimmzug-Progression · Ziel Juli</div>
+    <div class="card">
+      <div id="pullup-prog"></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-head">Top Empfehlungen</div>
+    <div id="recs"></div>
+  </div>
+</div>
+
+<!-- TRAINING -->
+<div id="tab-training" style="display:none">
+  <div class="session-grid" id="sess-grid"></div>
+  <div id="session-note-box" class="session-note"></div>
+  <div id="exercise-list"></div>
+  <button class="reset-btn" onclick="resetSets()">Alle Sätze zurücksetzen</button>
+</div>
+
+<!-- MEALS -->
+<div id="tab-meals" style="display:none">
+  <div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.15);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--green);line-height:1.6">
+    🥷 <strong>Ninja Combi Batch-Session</strong> · ~90 Min · reicht für 5 Tage<br>
+    <span style="color:var(--muted)">Schritte 1 & 2 gleichzeitig starten!</span>
+  </div>
+
+  <div class="section-head" style="margin-bottom:12px">Tagesplan</div>
+  <div id="meal-cards"></div>
+
+  <div class="section-head" style="margin-top:24px;margin-bottom:12px">Meal Prep Schritte</div>
+  <div id="prep-steps"></div>
+
+  <div class="card" style="margin-top:8px">
+    <div class="section-head" style="margin-bottom:12px">🧊 Aufbewahrung</div>
+    <div id="storage-guide"></div>
+  </div>
+</div>
+
+<!-- SUPPLEMENTS -->
+<div id="tab-supplements" style="display:none">
+  <div class="toggle-row">
+    <button class="toggle-btn active" id="tog-train" onclick="setTrainDay(true)">🏋️ Trainingstag</button>
+    <button class="toggle-btn inactive" id="tog-rest" onclick="setTrainDay(false)">😴 Ruhetag</button>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="section-head" style="margin-bottom:12px">Tagesablauf</div>
+    <div id="sched-list"></div>
+  </div>
+  <div class="section-head" style="margin-bottom:12px">Supplement Details</div>
+  <div id="supp-cards"></div>
+  <div class="card" style="margin-top:8px;font-size:12px;color:var(--muted);line-height:1.6">
+    💡 Noch nicht vorhanden: <strong style="color:var(--sub)">Magnesium Glycinat</strong> und <strong style="color:var(--sub)">Omega-3</strong> – größte Hebel für besseren Schlaf & HRV.
+  </div>
+</div>
+```
+
+  </div><!-- app-body -->
+</div><!-- app -->
+
+<script>
+// ── PASSWORD ──
+const PW = 'Recomp2026!';
+function openPwModal(){document.getElementById('pw-modal').classList.add('open');setTimeout(()=>document.getElementById('pw-input').focus(),100)}
+function closePwModal(){document.getElementById('pw-modal').classList.remove('open');document.getElementById('pw-input').value='';document.getElementById('pw-err').textContent=''}
+function checkPw(){
+  const v=document.getElementById('pw-input').value;
+  if(v===PW){sessionStorage.setItem('nr_auth','1');closePwModal();openApp()}
+  else{
+    const i=document.getElementById('pw-input');
+    i.classList.add('error');document.getElementById('pw-err').textContent='Falsches Passwort.';
+    setTimeout(()=>i.classList.remove('error'),400);
+  }
+}
+function openApp(){document.getElementById('app').classList.add('open');renderAll()}
+function logout(){document.getElementById('app').classList.remove('open');sessionStorage.removeItem('nr_auth')}
+if(sessionStorage.getItem('nr_auth')==='1')openApp();
+
+// ── TABS ──
+function switchTab(id,btn){
+  ['dashboard','training','meals','supplements'].forEach(t=>document.getElementById('tab-'+t).style.display='none');
+  document.getElementById('tab-'+id).style.display='block';
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── DATA ──
+const SESSIONS={
+  'Upper A':{color:'#60a5fa',tag:'Push + Pull',note:'💡 Pull-Ups ZUERST – frisch & fokussiert. Ziel bis Juli: 3×8 sauber.',
+    exercises:[
+      {name:'Pull-Ups',sets:4,reps:'3–6',note:'⚡ Schwachstelle – immer als Erstes!',priority:true},
+      {name:'Schräge Brustpresse (Maschine)',sets:4,reps:'8–12',note:'2 Warmup-Sätze vorher'},
+      {name:'Iso-Laterales Rudern von oben',sets:3,reps:'10–12'},
+      {name:'Flat Iso Chest Press',sets:3,reps:'8–12'},
+      {name:'Overhead Press (Maschine)',sets:3,reps:'10–12',note:'🎯 Schulter aufbauen'},
+      {name:'Seitheben (Maschine)',sets:3,reps:'15–20',note:'Langsam & kontrolliert'},
+      {name:'Preacher Curl (Maschine)',sets:2,reps:'10–12',note:'Superset mit Trizeps'},
+      {name:'Trizepsdrücken (Kabel)',sets:2,reps:'12–15',note:'Superset mit Bizeps'},
+    ]},
+  'Lower A':{color:'#4ade80',tag:'Quad-Dom.',note:'💡 Schwerste Kniebeugen-Variante zuerst, Core am Ende nicht weglassen.',
+    exercises:[
+      {name:'Gürtelkniebeuge (Maschine)',sets:4,reps:'8–12',note:'2 Warmup-Sätze vorher'},
+      {name:'Beinstrecken',sets:3,reps:'10–15',note:'~100 kg, RPE 8'},
+      {name:'Hip Thrust (Maschine)',sets:3,reps:'10–12',note:'1 Sek. Pause oben'},
+      {name:'Hüftabduktion',sets:3,reps:'12–15'},
+      {name:'Beinbeugen sitzend',sets:3,reps:'10–12'},
+      {name:'Wadenheben stehend',sets:3,reps:'12–15',note:'3 Sek. Exzentrik'},
+      {name:'Rumpfbeugen Kabel',sets:3,reps:'12–15',note:'Core-Finisher'},
+    ]},
+  'Upper B':{color:'#c084fc',tag:'Schulter-Fokus',note:'💡 Mehr Schultervolumen als Upper A – Ausgleichs-Tag. 4 Sätze Seitheben!',
+    exercises:[
+      {name:'Pull-Ups / Latzug',sets:4,reps:'5–8',note:'⚡ Klimmzüge wenn möglich',priority:true},
+      {name:'Chest Supported T-Bar Row',sets:3,reps:'8–11'},
+      {name:'Butterfly (Maschine)',sets:3,reps:'10–15'},
+      {name:'Iso-Laterales Rudern',sets:3,reps:'10–12'},
+      {name:'Seitheben (Maschine)',sets:4,reps:'15–20',note:'🎯 4 Sätze! Priorität'},
+      {name:'Pullover (Maschine)',sets:3,reps:'8–12'},
+      {name:'Brust-Dips',sets:3,reps:'6–10'},
+      {name:'Rumpfbeugen Kabel',sets:2,reps:'12–15'},
+    ]},
+  'Lower B':{color:'#fb923c',tag:'Ham-Dom.',note:'💡 Glute Ham Raise zuerst – frisch angehen. Höchstes Hip Thrust Gewicht der Woche.',
+    exercises:[
+      {name:'Glute Ham Raise',sets:3,reps:'6–10',note:'⚡ Schwachstelle – frisch!',priority:true},
+      {name:'Liegendes Beinbeugen',sets:4,reps:'8–12',note:'2 Warmup-Sätze'},
+      {name:'Hip Thrust (Maschine)',sets:4,reps:'10–12',note:'Schwerste der Woche'},
+      {name:'Hüftadduktion',sets:3,reps:'10–12'},
+      {name:'Beinstrecken',sets:2,reps:'12–15',note:'Leichter als Lower A'},
+      {name:'Hyperextension',sets:3,reps:'12–15'},
+      {name:'Wadenheben stehend',sets:3,reps:'12–15'},
+    ]},
+};
 
 const MEALS=[
-  {t:"07:30",l:"Frühstück",ic:"🌅",kcal:560,opts:[
-    {n:"Protein Oats",ing:["80g Haferflocken","300ml Magermilch","1 Protein Shake","150g Beeren TK"],prep:"3 Min kochen. Shake nach dem Kochen einrühren.",nj:null,m:"580 kcal · 50g P · 70g C · 9g F"},
-    {n:"Ei & Quark Bowl",ing:["3 Eier","200g Magerquark","2 Scheiben Vollkornbrot","Tomaten"],prep:"Eier aus Meal Prep. Quark würzen.",nj:"Pressure Cook · 5 Min · High · kalt abschrecken",m:"520 kcal · 52g P · 45g C · 12g F"},
+  {time:'07:30',icon:'🌅',label:'Frühstück',kcal:560,options:[
+    {name:'Protein Oats',macro:'580 kcal · 50g P · 70g C · 9g F',ingredients:['80g Haferflocken','300ml Magermilch','1 Proteinshake 25g','150g Beeren TK','1 TL Honig'],prep:'Haferflocken 3 Min kochen oder über Nacht kalt einweichen. Protein nach dem Kochen einrühren.',ninja:null},
+    {name:'Ei & Quark Bowl',macro:'520 kcal · 52g P · 45g C · 12g F',ingredients:['3 Eier hartgekocht','200g Magerquark','2 Scheiben Vollkornbrot','Tomaten, Gurke'],prep:'Eier aus dem Meal Prep. Quark mit Salz & Pfeffer würzen.',ninja:'Pressure Cook · 5 Min · High Pressure · sofort kalt abschrecken'},
   ]},
-  {t:"12:30",l:"Mittagessen",ic:"☀️",kcal:700,opts:[
-    {n:"Hähnchen Bowl",ing:["200g Hähnchenbrust","150g Reis","200g Brokkoli","Sojasoße"],prep:"Aus Meal Prep, 2 Min Mikrowelle.",nj:"Pressure Cook 12 Min + Steam Reis gleichzeitig",m:"710 kcal · 58g P · 82g C · 12g F"},
-    {n:"Thunfisch & Süßkartoffel",ing:["200g Süßkartoffel","1 Dose Thunfisch","Rucola","Zitrone"],prep:"Aus Prep. Thunfisch mit Zitrone mischen.",nj:"Air Fry · 200°C · 20 Min · halbiert",m:"680 kcal · 52g P · 78g C · 13g F"},
+  {time:'12:30',icon:'☀️',label:'Mittagessen',kcal:700,options:[
+    {name:'Hähnchen Bowl',macro:'710 kcal · 58g P · 82g C · 12g F',ingredients:['200g Hähnchenbrust','150g Reis','200g Brokkoli','1 EL Sojasoße','Sesamöl'],prep:'Alles aus Meal Prep, 2 Min Mikrowelle. Sojasoße & Sesamöl drüber.',ninja:'Hähnchen: Pressure Cook · 12 Min · High · Reis gleichzeitig im Dampfeinsatz'},
+    {name:'Thunfisch & Süßkartoffel',macro:'680 kcal · 52g P · 78g C · 13g F',ingredients:['200g Süßkartoffel','1 Dose Thunfisch 150g','Rucola','Zitronensaft','Olivenöl'],prep:'Süßkartoffel aus Meal Prep. Thunfisch mit Zitrone & Öl mischen.',ninja:'Air Fry · 200°C · 20 Min · halbiert'},
   ]},
-  {t:"17:00",l:"Pre-Workout",ic:"⚡",kcal:280,opts:[
-    {n:"Banane + Quark",ing:["1 Banane","150g Magerquark","5g Kreatin"],prep:"Quick Snack. Kreatin ins Wasser.",nj:null,m:"290 kcal · 22g P · 42g C · 1g F"},
-    {n:"Reiskuchen & Ei",ing:["4 Reiskuchen","2 Eier","20g Mandelmus"],prep:"Eier aus Meal Prep.",nj:null,m:"270 kcal · 18g P · 35g C · 8g F"},
+  {time:'17:00',icon:'⚡',label:'Pre-Workout',kcal:280,options:[
+    {name:'Banane + Quark',macro:'290 kcal · 22g P · 42g C · 1g F',ingredients:['1 große Banane','150g Magerquark','5g Kreatin im Wasser'],prep:'Kein Kochen nötig. Kreatin ins Wasser oder Saft.',ninja:null},
+    {name:'Reiskuchen & Ei',macro:'270 kcal · 18g P · 35g C · 8g F',ingredients:['4 Reiskuchen','2 hartgekochte Eier','20g Mandelmus'],prep:'Eier aus Meal Prep. Mandelmus auf Reiskuchen.',ninja:null},
   ]},
-  {t:"19:30",l:"Post-Workout",ic:"💪",kcal:550,opts:[
-    {n:"Shake + Meal",ing:["30g Whey","150g Hähnchen","200g Reis","Gemüse"],prep:"Shake sofort. 30 Min später das Meal.",nj:null,m:"560 kcal · 55g P · 63g C · 7g F"},
-    {n:"Lachs & Süßkartoffel",ing:["180g Lachs","200g Süßkartoffel","Spinat","Zitrone"],prep:"Lachs frisch, 10 Min.",nj:"Air Fry · 180°C · 10 Min",m:"580 kcal · 48g P · 50g C · 18g F"},
+  {time:'19:30',icon:'💪',label:'Post-Workout',kcal:550,options:[
+    {name:'Shake + Meal',macro:'560 kcal · 55g P · 63g C · 7g F',ingredients:['30g Whey im Wasser','150g Hähnchen','200g Kartoffeln/Reis','Gemüse'],prep:'Shake sofort nach Training. 30 Min später das Meal erhitzen.',ninja:null},
+    {name:'Lachs & Süßkartoffel',macro:'580 kcal · 48g P · 50g C · 18g F',ingredients:['180g Lachsfilet','200g Süßkartoffel','Spinat','Zitrone','Dill'],prep:'Lachs frisch – dauert nur 10 Min.',ninja:'Air Fry · 180°C · 10 Min · mit Zitrone & Dill'},
   ]},
-  {t:"21:00",l:"Abendessen",ic:"🌙",kcal:410,opts:[
-    {n:"Quark Bowl",ing:["300g Magerquark","30g Protein","100g Beeren","20g Walnüsse"],prep:"Alles verrühren.",nj:null,m:"400 kcal · 60g P · 20g C · 10g F"},
-    {n:"Hähnchen & Gemüse",ing:["150g Hähnchen","300g Gemüse Mix","Kräuter"],prep:"Aus Prep warm machen.",nj:"Air Fry · 190°C · 15 Min",m:"420 kcal · 45g P · 22g C · 14g F"},
+  {time:'21:00',icon:'🌙',label:'Abendessen',kcal:410,options:[
+    {name:'Quark Bowl',macro:'400 kcal · 60g P · 20g C · 10g F',ingredients:['300g Magerquark','30g Proteinpulver','100g Beeren','20g Walnüsse','Zimt'],prep:'Alles verrühren. Protein einrühren nach dem Kühlen.',ninja:null},
+    {name:'Hähnchen & Gemüse',macro:'420 kcal · 45g P · 22g C · 14g F',ingredients:['150g Hähnchenbrust','300g Gemüse Mix','Kräuter','Olivenöl'],prep:'Aus Meal Prep warm machen oder kurz anbraten.',ninja:'Air Fry · 190°C · 15 Min · mit Kräutern'},
   ]},
 ];
 
-const PREP=[
-  {i:1,title:"Hähnchenbrust Batch",qty:"800–1000g",method:"Pressure Cook",set:"High · 12 Min · Brühe+Knoblauch",tip:"Reicht 5 Tage. Sofort portionieren.",ic:"🍗",c:"#fb923c"},
-  {i:2,title:"Reis Batch",qty:"400g roh → ~1,2kg",method:"Steam (gleichzeitig!)",set:"20 Min · Reis oben, Hähnchen unten",tip:"Ninja macht beides gleichzeitig!",ic:"🍚",c:"#facc15"},
-  {i:3,title:"Süßkartoffeln",qty:"600g (3–4 Stück)",method:"Air Fry",set:"200°C · 20 Min · halbiert",tip:"Schnittfläche oben, mit Öl.",ic:"🍠",c:"#fb923c"},
-  {i:4,title:"Hartgekochte Eier",qty:"8–10 Stück",method:"Pressure Cook",set:"High · 5 Min · kalt abschrecken",tip:"5 Tage haltbar (ungeschält).",ic:"🥚",c:"#facc15"},
-  {i:5,title:"Gemüse rösten",qty:"Brokkoli, Zucchini, Paprika",method:"Air Fry",set:"190°C · 15 Min · eine Schicht",tip:"Direkt nach Süßkartoffeln.",ic:"🥦",c:"#4ade80"},
-  {i:6,title:"Overnight Oats",qty:"5 Portionen (je 80g)",method:"Kalt vorbereiten",set:"Haferflocken+Milch+Protein in Gläser",tip:"Morgens nur Beeren drauf.",ic:"🥣",c:"#60a5fa"},
+const PREP_STEPS=[
+  {icon:'🍗',title:'Hähnchenbrust Batch',qty:'800–1000g',dur:'15 Min',method:'Pressure Cook',settings:'High Pressure · 12 Min · mit Brühe, Knoblauch, Salz',tip:'Reicht für 5 Tage. Direkt in Portionen aufteilen.'},
+  {icon:'🍚',title:'Reis Batch',qty:'400g roh = ~1,2kg gekocht',dur:'20 Min',method:'Steam (gleichzeitig!)',settings:'Steam · 20 Min · Reis im oberen Einsatz',tip:'Ninja Combi: Hähnchen unten, Reis oben – gleichzeitig starten!'},
+  {icon:'🍠',title:'Süßkartoffeln',qty:'600g (3–4 Stück)',dur:'20 Min',method:'Air Fry',settings:'200°C · 20 Min · halbiert, mit Olivenöl',tip:'Halbiert garen schneller und karamellisieren schön.'},
+  {icon:'🥚',title:'Hartgekochte Eier',qty:'8–10 Stück',dur:'5 Min',method:'Pressure Cook',settings:'High Pressure · 5 Min · sofort kalt abschrecken',tip:'5 Min = perfekt hartgekocht, easy zu schälen. Hält 5 Tage.'},
+  {icon:'🥦',title:'Gemüse rösten',qty:'Brokkoli, Zucchini, Paprika',dur:'15 Min',method:'Air Fry',settings:'190°C · 15 Min · Olivenöl, Salz, Knoblauchpulver',tip:'In einer Schicht – nicht stapeln. Direkt nach Süßkartoffeln.'},
+  {icon:'🥣',title:'Overnight Oats',qty:'5 Portionen á 80g',dur:'5 Min',method:'Kein Kochen',settings:'Haferflocken + Milch + Protein in Gläser, kalt stellen',tip:'5 Gläser auf einmal vorbereiten. Morgens nur Beeren drauf.'},
 ];
 
-const SUPPS=[
-  {n:"Kreatin Monohydrat",d:"5g täglich",ic:"⚡",tr:"Pre-Workout (17:00)",re:"Morgens zum Frühstück",w:"Wichtigstes Supplement. Täglich – Timing egal.",c:"#60a5fa",p:"ESSENTIELL"},
-  {n:"Whey Protein",d:"30g",ic:"🥤",tr:"Post-Workout",re:"Nur wenn Protein-Ziel fehlt",w:"Erst tracken, dann ergänzen.",c:"#c084fc",p:"NACH BEDARF"},
-  {n:"Vitamin D3 + K2",d:"2.000–4.000 IU",ic:"☀️",tr:"Morgens mit Fett",re:"Morgens mit Fett",w:"Post-Burnout wichtig. K2 verbessert Verwertung.",c:"#facc15",p:"TÄGLICH"},
-  {n:"Magnesium Glycinat",d:"300–400mg",ic:"🌙",tr:"Abends (21:00)",re:"Abends (21:00)",w:"Verbessert Schlaf & HRV direkt. Glycinat-Form = magenfreundlich.",c:"#2dd4bf",p:"TÄGLICH"},
-  {n:"Omega-3 EPA/DHA",d:"2–3g täglich",ic:"🐟",tr:"Morgens",re:"Morgens",w:"Entzündungshemmend, Regeneration, Herzgesundheit.",c:"#4ade80",p:"TÄGLICH"},
-  {n:"Zink",d:"15–25mg",ic:"🔬",tr:"Abends",re:"Abends",w:"Testosteron & Immunsystem.",c:"#fb923c",p:"EMPFOHLEN"},
+const STORAGE=[
+  {item:'Hähnchenbrust',days:'5 Tage',note:'Kühlschrank, luftdicht'},
+  {item:'Reis',days:'4 Tage',note:'Kühlschrank, portioniert'},
+  {item:'Süßkartoffeln',days:'5 Tage',note:'Kühlschrank'},
+  {item:'Hartgekochte Eier',days:'5 Tage',note:'Ungeschält länger haltbar'},
+  {item:'Gemüse geröstet',days:'4 Tage',note:'Kühlschrank'},
+  {item:'Overnight Oats',days:'3 Tage',note:'Kühlschrank im Glas'},
 ];
 
-const FOODS=[
-  {n:"Hähnchenbrustfilet (roh)",k:110,p:23,c:0,f:1.2},{n:"Magerquark",k:68,p:12,c:4,f:0.2},
-  {n:"Griech. Joghurt 0%",k:59,p:10,c:3.6,f:0.4},{n:"Ei (ganz)",k:78,p:6,c:0.6,f:5},
-  {n:"Lachs (roh)",k:208,p:20,c:0,f:13},{n:"Thunfisch (Dose)",k:116,p:26,c:0,f:1},
-  {n:"Haferflocken",k:372,p:13,c:58,f:7},{n:"Reis (gekocht)",k:130,p:2.7,c:28,f:0.3},
-  {n:"Süßkartoffel (gegart)",k:86,p:1.6,c:20,f:0.1},{n:"Brokkoli",k:34,p:2.8,c:7,f:0.4},
-  {n:"Banane",k:89,p:1.1,c:23,f:0.3},{n:"Proteinshake (Whey)",k:120,p:25,c:3,f:1.5},
-  {n:"Olivenöl",k:884,p:0,c:0,f:100},{n:"Mandeln",k:579,p:21,c:22,f:50},
+const SUPPLEMENTS=[
+  {icon:'⚡',name:'Kreatin Monohydrat',dose:'5g',priority:'ESSENTIELL',priColor:'#60a5fa',priBg:'rgba(96,165,250,.15)',
+    train:'Pre-Workout (17:00)',rest:'Morgens zum Frühstück',
+    why:'Wichtigstes Supplement für Kraft & Rekomposition. Täglich – Timing spielt kaum eine Rolle.'},
+  {icon:'🥤',name:'Whey Protein',dose:'30g',priority:'NACH BEDARF',priColor:'#c084fc',priБg:'rgba(192,132,252,.15)',
+    train:'Direkt post-workout (~19:15)',rest:'Falls Protein-Ziel fehlt',
+    why:'Nur nutzen wenn du mit Essen nicht auf 190g Protein kommst. Erst tracken, dann ergänzen.'},
+  {icon:'☀️',name:'Vitamin D3 + K2',dose:'2.000–4.000 IU',priority:'TÄGLICH',priColor:'#facc15',priБg:'rgba(250,204,21,.15)',
+    train:'Morgens zum Frühstück (mit Fett)',rest:'Morgens zum Frühstück',
+    why:'Post-Burnout besonders wichtig. Unterstützt Immunsystem, Hormone, Schlaf.'},
+  {icon:'🌙',name:'Magnesium Glycinat',dose:'300–400mg',priority:'TÄGLICH',priColor:'#2dd4bf',priБg:'rgba(45,212,191,.15)',
+    train:'Abends vor dem Schlafen (21:00)',rest:'Abends vor dem Schlafen',
+    why:'Verbessert Schlafqualität & HRV direkt. Glycinat-Form ist magenfreundlicher als Oxid.'},
+  {icon:'🐟',name:'Omega-3 (EPA/DHA)',dose:'2–3g täglich',priority:'TÄGLICH',priColor:'#4ade80',priБg:'rgba(74,222,128,.15)',
+    train:'Morgens zum Frühstück',rest:'Morgens zum Frühstück',
+    why:'Entzündungshemmend, unterstützt Regeneration & Herzgesundheit. Wichtig nach Burnout.'},
+  {icon:'🔬',name:'Zink',dose:'15–25mg',priority:'EMPFOHLEN',priColor:'#fb923c',priБg:'rgba(251,146,60,.15)',
+    train:'Abends (nicht mit Kalzium)',rest:'Abends',
+    why:'Testosteron & Immunsystem. Viele Menschen sind leicht defizient bei viel Sport.'},
 ];
-const GOALS={k:2500,p:190,c:330,f:72};
 
-const STEPS=[7956,5710,5923,3427,5587,5535,11898,11772,6673,7397,1420,5866,9874,7188,7441,2840,10353,8779,7747,8958,8833,10218,21083,3718,5269,12282,12465,4539,5064,5056];
-const SDAYS=["9.4","10.4","11.4","12.4","13.4","14.4","15.4","16.4","17.4","18.4","19.4","20.4","21.4","22.4","23.4","24.4","25.4","26.4","27.4","28.4","29.4","30.4","1.5","2.5","3.5","4.5","5.5","6.5","7.5","8.5"];
-const HRV=[{d:"9.4",h:44,r:99},{d:"11.4",h:49,r:48},{d:"13.4",h:56,r:65},{d:"15.4",h:48,r:84},{d:"17.4",h:48,r:54},{d:"19.4",h:42,r:58},{d:"21.4",h:24,r:71},{d:"23.4",h:51,r:78},{d:"25.4",h:59,r:68},{d:"27.4",h:35,r:65},{d:"29.4",h:54,r:67},{d:"1.5",h:20,r:77},{d:"3.5",h:40,r:68},{d:"5.5",h:35,r:76},{d:"8.5",h:63,r:62}];
+const MUSCLES=[
+  {m:'Rücken',v:80,c:'#60a5fa'},{m:'Quads',v:85,c:'#4ade80'},{m:'Hamstrings',v:75,c:'#4ade80'},
+  {m:'Brust',v:72,c:'#60a5fa'},{m:'Waden',v:70,c:'#4ade80'},{m:'Schultern',v:65,c:'#f87171'},
+  {m:'Trizeps',v:68,c:'#c084fc'},{m:'Bizeps',v:60,c:'#f87171'},
+];
+const RECS=[
+  {icon:'⚡',title:'Klimmzüge priorisieren',detail:'Nur 3–5 Wdh → als erste Übung trainieren, nie als Finisher. Ziel: 3×8 bis Woche 8.',col:'#f87171'},
+  {icon:'💤',title:'Schlaf optimieren',detail:'Einschlafzeit konsequent vor 22 Uhr. HRV-Dips (20 ms) korrelieren mit späten Nächten.',col:'#fb923c'},
+  {icon:'📈',title:'Schritte erhöhen',detail:'Ø 7.696 – Ziel 9.000+. Ruhetage oft unter 4.000: kurze Spaziergänge einplanen.',col:'#facc15'},
+  {icon:'🦾',title:'Schultervolumen halten',detail:'4 Sätze Seitheben in Upper B nicht kürzen – Schultern sind aktuell Schwachstelle.',col:'#2dd4bf'},
+];
+const PULLUP_PROG=[
+  {week:'Jetzt',goal:'3–5 Wdh. × 4 Sätze',status:'🟡 Aktuell'},
+  {week:'Woche 4',goal:'5–6 Wdh. × 4 Sätze',status:'🎯 Ziel'},
+  {week:'Woche 8',goal:'3×8 sauber',status:'🏆 Meilenstein'},
+  {week:'Woche 12',goal:'3×8 + Gewichtsgürtel',status:'🚀 Stretch'},
+];
 
-// COMPONENTS
-const TT=({active,payload,label})=>{
-  if(!active||!payload?.length)return null;
-  return <div style={{background:"#0d0d0d",border:"1px solid #333",borderRadius:8,padding:"7px 11px",fontSize:11}}>
-    <div style={{color:C.mt,marginBottom:3}}>{label}</div>
-    {payload.map((p,i)=><div key={i} style={{color:p.color||C.tx}}>{p.name}: <b>{p.value}</b></div>)}
-  </div>;
-};
+// ── STATE ──
+let activeSession='Upper A';
+let checkedSets={};
+let doneSteps={};
+let mealOpts={};
+let openMeal=null;
+let trainDay=true;
+let rendered=false;
 
-const MBar=({l,v,g,col})=>{
-  const pct=Math.min(100,Math.round(v/g*100)),over=v>g;
-  return <div style={{marginBottom:7}}>
-    <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-      <span style={{fontSize:11,color:C.mt}}>{l}</span>
-      <span style={{fontSize:11}}><b style={{color:over?"#fb923c":col}}>{Math.round(v)}</b><span style={{color:C.mt}}>/{g}g</span></span>
-    </div>
-    <div style={{height:5,background:"#1e293b",borderRadius:3,overflow:"hidden"}}>
-      <div style={{width:`${pct}%`,height:"100%",background:over?"#fb923c":col,borderRadius:3,transition:"width .3s"}}/>
-    </div>
-  </div>;
-};
+function renderAll(){if(rendered)return;rendered=true;renderDashboard();renderTraining();renderMeals();renderSupplements();}
 
-const Ring=({v,g})=>{
-  const pct=Math.min(1,v/g),r=38,ci=2*Math.PI*r;
-  const col=v>g?"#fb923c":v/g>0.85?"#4ade80":"#60a5fa";
-  return <div style={{position:"relative",width:84,height:84,flexShrink:0}}>
-    <svg width={84} height={84} style={{transform:"rotate(-90deg)"}}>
-      <circle cx={42} cy={42} r={r} fill="none" stroke="#1e293b" strokeWidth={7}/>
-      <circle cx={42} cy={42} r={r} fill="none" stroke={col} strokeWidth={7}
-        strokeDasharray={ci} strokeDashoffset={ci*(1-pct)} strokeLinecap="round"
-        style={{transition:"stroke-dashoffset .4s"}}/>
-    </svg>
-    <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
-      <div style={{fontSize:14,fontWeight:800,color:col}}>{Math.round(v)}</div>
-      <div style={{fontSize:9,color:C.mt}}>kcal</div>
-    </div>
-  </div>;
-};
-
-// LOCK
-function Lock({onUnlock}){
-  const [pw,setPw]=useState(""),[err,setErr]=useState(false),[shake,setShake]=useState(false);
-  const try_=()=>{
-    if(pw===PW){onUnlock();}
-    else{setErr(true);setShake(true);setTimeout(()=>setShake(false),500);setTimeout(()=>setErr(false),2500);setPw("");}
-  };
-  return <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:24}}>
-    <div style={{width:"100%",maxWidth:340,animation:"fadeUp .6s ease both"}}>
-      <div style={{textAlign:"center",marginBottom:36}}>
-        <div style={{fontFamily:"'DM Serif Display',serif",fontSize:56,lineHeight:.9,color:C.tx,letterSpacing:"-0.02em"}}>NR</div>
-        <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:C.mt,letterSpacing:"0.22em",marginTop:6}}>NICOLASROMIG.DE</div>
-      </div>
-      <div style={{background:C.bg2,border:`1px solid ${err?"#ff475750":C.ln2}`,borderRadius:14,padding:26,transition:"border .2s",transform:shake?"translateX(-5px)":"none"}}>
-        <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:C.mt,letterSpacing:"0.12em",marginBottom:14}}>🔒 PERSÖNLICHER BEREICH</div>
-        <input type="password" value={pw} onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==="Enter"&&try_()}
-          placeholder="Passwort..." autoFocus
-          style={{width:"100%",padding:"11px 14px",borderRadius:9,background:"#131820",border:`1px solid ${err?"#ff4757":C.sb}`,
-            color:C.tx,fontSize:13,fontFamily:"'DM Mono',monospace",marginBottom:10,boxSizing:"border-box",transition:"border .2s"}}/>
-        <button onClick={try_} style={{width:"100%",padding:"11px",borderRadius:9,border:"none",
-          background:C.ac,color:"#000",fontSize:13,fontWeight:800,letterSpacing:"0.05em",transition:"opacity .15s"}}
-          onMouseEnter={e=>e.target.style.opacity=".8"} onMouseLeave={e=>e.target.style.opacity="1"}>
-          ZUGANG FREISCHALTEN
-        </button>
-        {err&&<div style={{fontSize:11,color:"#ff4757",textAlign:"center",marginTop:9,fontFamily:"'DM Mono',monospace"}}>Falsches Passwort</div>}
-      </div>
-      <div style={{marginTop:18,display:"flex",flexDirection:"column",gap:8}}>
-        <a href="https://www.linkedin.com/in/nicolasromig" target="_blank"
-          style={{display:"flex",alignItems:"center",gap:11,padding:"11px 15px",background:C.bg2,border:`1px solid ${C.ln}`,
-            borderRadius:9,textDecoration:"none",color:C.tx,fontSize:13,fontWeight:600}}>
-          <span>💼</span>LinkedIn<span style={{marginLeft:"auto",color:C.mt}}>→</span>
-        </a>
-      </div>
-    </div>
-  </div>;
+// ── DASHBOARD RENDER ──
+function renderDashboard(){
+  // Muscle bars
+  const mb=document.getElementById('muscle-bars');
+  mb.innerHTML=MUSCLES.map(m=>`
+    <div class="bar-row">
+      <div class="bar-label"><span style="color:var(--sub)">${m.m}</span><span style="color:${m.v>=75?'var(--green)':m.v>=65?'var(--sub)':'var(--red)'}">${m.v}/100</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${m.v}%;background:${m.c}"></div></div>
+    </div>`).join('');
+  // Pullup prog
+  const pp=document.getElementById('pullup-prog');
+  pp.innerHTML=PULLUP_PROG.map(p=>`
+    <div class="prog-item">
+      <span class="prog-week">${p.week}</span>
+      <span style="font-size:12px;color:var(--sub);flex:1">${p.goal}</span>
+      <span class="prog-status">${p.status}</span>
+    </div>`).join('');
+  // Recs
+  const rc=document.getElementById('recs');
+  rc.innerHTML=RECS.map(r=>`
+    <div class="card" style="border-color:${r.col}25;display:flex;gap:12px;align-items:flex-start;margin-bottom:8px">
+      <div style="width:36px;height:36px;border-radius:8px;background:${r.col}15;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${r.icon}</div>
+      <div><div style="font-size:13px;font-weight:700;margin-bottom:4px">${r.title}</div><div style="font-size:11px;color:var(--muted);line-height:1.6">${r.detail}</div></div>
+    </div>`).join('');
 }
 
-// DASHBOARD
-function Dashboard(){
-  const sd=STEPS.map((v,i)=>({d:SDAYS[i],v}));
-  return <div style={{display:"flex",flexDirection:"column",gap:18}}>
-    <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:7}}>
-      {[{l:"Ø Schritte",v:"7.696",c:C.gr},{l:"Ruhepuls",v:"67 bpm",c:C.bl},{l:"HRV Ø",v:"44 ms",c:C.pu},
-        {l:"Akt. kcal",v:"767/Tag",c:C.ye},{l:"Gewicht",v:"95.9 kg",c:"#f48fb1"},{l:"Training",v:"4×/Woche",c:C.te}].map((k,i)=>(
-        <div key={i} style={{background:`${k.c}09`,border:`1px solid ${k.c}22`,borderRadius:9,padding:"11px 8px",textAlign:"center"}}>
-          <div style={{fontSize:16,fontWeight:800,color:k.c,fontFamily:"'DM Mono',monospace"}}>{k.v}</div>
-          <div style={{fontSize:10,color:C.mt,marginTop:2}}>{k.l}</div>
-        </div>
-      ))}
-    </div>
-    <div>
-      <div style={{fontSize:10,color:C.mt,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:9}}>Schritte – Mai 2026</div>
-      <ResponsiveContainer width="100%" height={130}>
-        <BarChart data={sd} barCategoryGap="20%">
-          <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false}/>
-          <XAxis dataKey="d" tick={{fontSize:9,fill:C.mt}} axisLine={false} tickLine={false} interval={6}/>
-          <YAxis tick={{fontSize:9,fill:C.mt}} axisLine={false} tickLine={false} width={32}/>
-          <Tooltip content={<TT/>}/>
-          <ReferenceLine y={9000} stroke={C.gr} strokeDasharray="4 4"/>
-          <Bar dataKey="v" name="Schritte" fill={C.gr} radius={[3,3,0,0]} opacity={.8}/>
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-    <div>
-      <div style={{fontSize:10,color:C.mt,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:9}}>HRV & Ruhepuls</div>
-      <ResponsiveContainer width="100%" height={130}>
-        <LineChart data={HRV}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#1a1a1a" vertical={false}/>
-          <XAxis dataKey="d" tick={{fontSize:9,fill:C.mt}} axisLine={false} tickLine={false} interval={3}/>
-          <YAxis tick={{fontSize:9,fill:C.mt}} axisLine={false} tickLine={false} width={28}/>
-          <Tooltip content={<TT/>}/>
-          <ReferenceLine y={25} stroke="#ff4757" strokeDasharray="4 4"/>
-          <Line dataKey="h" name="HRV ms" stroke={C.pu} strokeWidth={2} dot={false}/>
-          <Line dataKey="r" name="Ruhepuls" stroke={C.bl} strokeWidth={2} dot={false} strokeDasharray="5 3"/>
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-    <div style={{background:C.bg2,border:`1px solid ${C.ln}`,borderRadius:10,padding:"13px 15px"}}>
-      <div style={{fontSize:11,fontWeight:700,color:"#94a3b8",marginBottom:9}}>⚡ Aktuelle Ziele & Insights</div>
-      {[["🏋️","Klimmzüge: 3–5 Wdh → Ziel 3×8 bis Woche 8"],
-        ["💤","HRV < 25 ms = leichter Tag, kein Hochintensitätstraining"],
-        ["👣","Schritte: Ziel 9.000/Tag – Ruhetage aktiver halten"],
-        ["⚖️","+1 kg seit Jan = wahrscheinlich Muskelaufbau ✅"]
-      ].map(([ic,tx],i)=>(
-        <div key={i} style={{display:"flex",gap:8,padding:"5px 0",borderBottom:i<3?"1px solid #1e293b":"none",fontSize:12,color:"#94a3b8"}}>
-          <span>{ic}</span>{tx}
-        </div>
-      ))}
-    </div>
-  </div>;
+// ── TRAINING RENDER ──
+function renderTraining(){
+  const sg=document.getElementById('sess-grid');
+  sg.innerHTML=Object.keys(SESSIONS).map(s=>`
+    <button class="sess-btn${s===activeSession?' active':''}" onclick="selectSession('${s}')" id="sbtn-${s.replace(' ','_')}">
+      <div class="sess-name" style="color:${s===activeSession?SESSIONS[s].color:'var(--sub)'}">${s}</div>
+      <div class="sess-focus">${SESSIONS[s].focus||SESSIONS[s].tag}</div>
+    </button>`).join('');
+  renderSession();
 }
-
-// TRAINING
-function Training(){
-  const [act,setAct]=useState("Upper A"),[chk,setChk]=useState({}),[sub,setSub]=useState("session");
-  const sess=PLAN[act];
-  const tog=(n,si)=>{const k=`${act}|${n}|${si}`;setChk(p=>({...p,[k]:!p[k]}));};
-  return <div>
-    <div style={{display:"flex",gap:4,marginBottom:14,background:C.bg2,borderRadius:8,padding:4,border:`1px solid ${C.ln}`}}>
-      {["session","woche"].map(t=>(
-        <button key={t} onClick={()=>setSub(t)} style={{flex:1,padding:"7px",borderRadius:6,border:"none",
-          background:sub===t?C.tx:"transparent",color:sub===t?"#000":C.mt,fontSize:12,fontWeight:600,transition:"all .15s"}}>
-          {t==="session"?"Session":"Wochenplan"}
-        </button>
-      ))}
-    </div>
-    {sub==="session"&&<>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginBottom:14}}>
-        {Object.entries(PLAN).map(([n,d])=>(
-          <button key={n} onClick={()=>setAct(n)} style={{padding:"9px 11px",borderRadius:9,border:"none",textAlign:"left",
-            background:act===n?`${d.color}14`:C.bg2,outline:act===n?`1.5px solid ${d.color}`:`1.5px solid ${C.ln}`,transition:"all .15s"}}>
-            <div style={{fontSize:12,fontWeight:700,color:act===n?d.color:"#94a3b8"}}>{n}</div>
-            <div style={{fontSize:10,color:C.mt,marginTop:1}}>{d.focus}</div>
-          </button>
-        ))}
-      </div>
-      <div style={{background:`${sess.color}07`,border:`1px solid ${sess.color}22`,borderRadius:9,padding:"9px 13px",marginBottom:12,fontSize:12,color:"#94a3b8"}}>
-        💡 {sess.note}
-      </div>
-      {sess.ex.map((ex,ei)=>{
-        const arr=Array.from({length:ex.s}),done=arr.filter((_,si)=>chk[`${act}|${ex.n}|${si}`]).length;
-        return <div key={ei} style={{background:ex.pri?`${sess.color}06`:C.bg2,border:`1px solid ${ex.pri?sess.color+"35":C.ln}`,borderRadius:9,padding:"10px 12px",marginBottom:6}}>
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:7}}>
-            <div>
-              <div style={{fontSize:13,fontWeight:600,color:ex.pri?sess.color:C.tx}}>{ex.n}</div>
-              <div style={{fontSize:11,color:C.mt,marginTop:1}}>{ex.s} Sätze · {ex.r} Wdh.{ex.note?` · ${ex.note}`:""}</div>
-            </div>
-            <div style={{fontSize:11,fontWeight:700,color:done===ex.s?C.gr:C.mt}}>{done}/{ex.s}</div>
-          </div>
-          <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
-            {arr.map((_,si)=>{
-              const d=chk[`${act}|${ex.n}|${si}`];
-              return <button key={si} onClick={()=>tog(ex.n,si)} style={{
-                width:29,height:29,borderRadius:6,border:"none",
-                background:d?sess.color:"#1e293b",color:d?"#000":C.mt,fontSize:11,fontWeight:700,transition:"all .15s"}}>
-                {d?"✓":si+1}</button>;
-            })}
-          </div>
-        </div>;
-      })}
-      <button onClick={()=>setChk({})} style={{width:"100%",marginTop:6,padding:"8px",borderRadius:7,border:`1px solid ${C.ln}`,background:"transparent",color:C.mt,fontSize:12}}>
-        Sätze zurücksetzen
-      </button>
-    </>}
-    {sub==="woche"&&<>
-      {WEEK.map((d,i)=>(
-        <div key={i} style={{display:"flex",gap:11,alignItems:"center",padding:"10px 12px",marginBottom:5,borderRadius:9,
-          background:d.r?"#0a0d14":C.bg2,border:`1px solid ${d.r?C.ln:(PLAN[d.s]?.color||C.ln)+"35"}`}}>
-          <div style={{width:33,height:33,borderRadius:7,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",
-            fontSize:12,fontWeight:800,background:d.r?"#1e293b":`${PLAN[d.s]?.color}18`,color:d.r?C.mt:PLAN[d.s]?.color}}>{d.d}</div>
-          <div style={{flex:1}}>
-            {d.r?<div style={{fontSize:12,color:C.mt}}>{d.note}</div>
-              :<><div style={{fontSize:13,fontWeight:600,color:PLAN[d.s]?.color}}>{d.s}</div>
-                <div style={{fontSize:11,color:C.mt}}>{PLAN[d.s]?.focus}</div></>}
-          </div>
-        </div>
-      ))}
-      <div style={{marginTop:12,background:C.bg2,border:`1px solid ${C.ln}`,borderRadius:10,padding:"13px"}}>
-        <div style={{fontSize:12,fontWeight:700,color:"#94a3b8",marginBottom:9}}>⚡ Klimmzug-Progression</div>
-        {[["Jetzt","3–5 Wdh. × 4 Sätze","🟡"],["Woche 4","5–6 Wdh. × 4 Sätze","🎯"],["Woche 8","3×8 sauber","🏆"],["Woche 12","3×8 + Gewichtsgürtel","🚀"]].map(([w,g,ic],i)=>(
-          <div key={i} style={{display:"flex",gap:9,alignItems:"center",padding:"5px 0",borderBottom:i<3?"1px solid #1e293b":"none"}}>
-            <div style={{fontSize:10,minWidth:52,color:C.mt,fontFamily:"'DM Mono',monospace"}}>{w}</div>
-            <div style={{flex:1,fontSize:12,color:"#94a3b8"}}>{g}</div>
-            <div>{ic}</div>
-          </div>
-        ))}
-      </div>
-    </>}
-  </div>;
+function selectSession(s){
+  activeSession=s;
+  document.querySelectorAll('.sess-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sbtn-'+s.replace(' ','_')).classList.add('active');
+  document.querySelectorAll('.sess-btn .sess-name').forEach((n,i)=>{
+    const key=Object.keys(SESSIONS)[i];
+    n.style.color=key===s?SESSIONS[key].color:'var(--sub)';
+  });
+  renderSession();
 }
-
-// MEALS
-function MealsTab(){
-  const [sub,setSub]=useState("tracker"),[open,setOpen]=useState(null),[oi,setOi]=useState({});
-  const [log,setLog]=useState([]),[search,setSearch]=useState(""),[sel,setSel]=useState(null),[grams,setGrams]=useState("");
-  const [done,setDone]=useState({});
-  const tot=log.reduce((a,e)=>({k:a.k+e.k,p:a.p+e.p,c:a.c+e.c,f:a.f+e.f}),{k:0,p:0,c:0,f:0});
-  const filt=search.length>1?FOODS.filter(f=>f.n.toLowerCase().includes(search.toLowerCase())):[];
-  const add=()=>{
-    if(!sel||!grams)return;const g=parseFloat(grams);if(isNaN(g)||g<=0)return;
-    const m=g/100;
-    setLog([...log,{id:Date.now(),n:sel.n,g,k:Math.round(sel.k*m),p:Math.round(sel.p*m*10)/10,c:Math.round(sel.c*m*10)/10,f:Math.round(sel.f*m*10)/10}]);
-    setSel(null);setSearch("");setGrams("");
-  };
-  return <div>
-    <div style={{display:"flex",gap:4,marginBottom:14,background:C.bg2,borderRadius:8,padding:4,border:`1px solid ${C.ln}`}}>
-      {[["tracker","📊 Tracker"],["plan","🍽️ Tagesplan"],["prep","🥡 Meal Prep"]].map(([t,l])=>(
-        <button key={t} onClick={()=>setSub(t)} style={{flex:1,padding:"6px 4px",borderRadius:6,border:"none",
-          background:sub===t?C.tx:"transparent",color:sub===t?"#000":C.mt,fontSize:10,fontWeight:600,transition:"all .15s"}}>{l}</button>
-      ))}
-    </div>
-    {sub==="tracker"&&<>
-      <div style={{display:"flex",gap:11,alignItems:"center",background:C.bg2,border:`1px solid ${C.ln}`,borderRadius:11,padding:"11px 13px",marginBottom:12}}>
-        <Ring v={Math.round(tot.k)} g={GOALS.k}/>
-        <div style={{flex:1}}>
-          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
-            <span style={{fontSize:11,color:C.mt}}>Rest heute</span>
-            <span style={{fontSize:12,fontWeight:700,color:tot.k>GOALS.k?"#fb923c":C.gr}}>{Math.max(0,GOALS.k-Math.round(tot.k))} kcal</span>
-          </div>
-          <MBar l="Protein" v={tot.p} g={GOALS.p} col={C.bl}/>
-          <MBar l="Kohlenhydrate" v={tot.c} g={GOALS.c} col={C.pu}/>
-          <MBar l="Fett" v={tot.f} g={GOALS.f} col={C.or}/>
-        </div>
-      </div>
-      <div style={{background:C.bg2,border:`1px solid ${C.ln}`,borderRadius:11,padding:"11px 13px",marginBottom:12}}>
-        <div style={{fontSize:11,fontWeight:600,color:"#94a3b8",marginBottom:7}}>+ Hinzufügen</div>
-        <input value={search} onChange={e=>{setSearch(e.target.value);setSel(null);}} placeholder="Suchen z.B. 'Hähnchen'..."
-          style={{width:"100%",padding:"8px 11px",borderRadius:7,background:"#1e293b",border:`1px solid ${C.sb}`,color:C.tx,fontSize:12,boxSizing:"border-box"}}/>
-        {filt.length>0&&!sel&&<div style={{marginTop:4,background:"#1e293b",borderRadius:7,border:`1px solid ${C.sb}`,overflow:"hidden"}}>
-          {filt.slice(0,5).map((f,i)=>(
-            <div key={i} onClick={()=>{setSel(f);setSearch(f.n);}} style={{padding:"7px 11px",cursor:"pointer",fontSize:12,color:"#94a3b8",
-              borderBottom:"1px solid #0f172a",display:"flex",justifyContent:"space-between"}}
-              onMouseEnter={e=>e.currentTarget.style.background="#334155"} onMouseLeave={e=>e.currentTarget.style.background=""}>
-              <span>{f.n}</span><span style={{color:C.mt,fontSize:11}}>{f.k} kcal · {f.p}g P</span>
-            </div>
-          ))}
-        </div>}
-        {sel&&<div style={{marginTop:7,display:"flex",gap:5,alignItems:"center"}}>
-          <div style={{flex:1,fontSize:11,color:C.bl,background:"#60a5fa10",padding:"5px 9px",borderRadius:6}}>✓ {sel.n}</div>
-          <input value={grams} onChange={e=>setGrams(e.target.value)} placeholder="g" type="number"
-            style={{width:65,padding:"5px 8px",borderRadius:6,background:"#1e293b",border:`1px solid ${C.sb}`,color:C.tx,fontSize:12}}/>
-          <button onClick={add} style={{padding:"5px 13px",borderRadius:6,border:"none",background:C.bl,color:"#000",fontSize:12,fontWeight:700}}>+</button>
-        </div>}
-      </div>
-      {log.length===0?<div style={{textAlign:"center",color:C.mt,fontSize:13,padding:"22px 0"}}>Noch nichts geloggt 🍽️</div>
-        :log.map((e,i)=>(
-          <div key={e.id} style={{display:"flex",gap:9,alignItems:"center",padding:"8px 11px",marginBottom:5,background:C.bg2,border:`1px solid ${C.ln}`,borderRadius:8}}>
-            <div style={{flex:1}}>
-              <div style={{fontSize:12,color:C.tx}}>{e.n} <span style={{color:C.mt,fontSize:10}}>({e.g}g)</span></div>
-              <div style={{fontSize:10,color:C.mt,marginTop:1}}>
-                <span style={{color:C.bl}}>{e.p}g P</span> · <span style={{color:C.pu}}>{e.c}g K</span> · <span style={{color:C.or}}>{e.f}g F</span>
-              </div>
-            </div>
-            <div style={{fontSize:12,fontWeight:700,color:"#94a3b8"}}>{e.k} kcal</div>
-            <button onClick={()=>setLog(log.filter((_,j)=>j!==i))} style={{background:"none",border:"none",color:C.mt,fontSize:17,padding:0}}>×</button>
-          </div>
-        ))}
-    </>}
-    {sub==="plan"&&MEALS.map((meal,mi)=>{
-      const idx=oi[mi]||0,opt=meal.opts[idx],isOpen=open===mi;
-      return <div key={mi} style={{marginBottom:7}}>
-        <button onClick={()=>setOpen(isOpen?null:mi)} style={{
-          width:"100%",background:isOpen?"#0f1e35":C.bg2,border:`1px solid ${isOpen?C.bl+"45":C.ln}`,
-          borderRadius:isOpen?"9px 9px 0 0":9,padding:"10px 12px",cursor:"pointer",textAlign:"left",
-          display:"flex",alignItems:"center",gap:9}}>
-          <div style={{width:34,height:34,borderRadius:8,background:"#1e293b",display:"flex",alignItems:"center",justifyContent:"center",fontSize:17,flexShrink:0}}>{meal.ic}</div>
-          <div style={{flex:1}}>
-            <div style={{display:"flex",gap:7,alignItems:"center"}}>
-              <span style={{fontSize:13,fontWeight:700,color:C.tx}}>{meal.l}</span>
-              <span style={{fontSize:10,padding:"2px 6px",borderRadius:9,background:"#1e293b",color:C.bl,fontFamily:"'DM Mono',monospace"}}>{meal.t}</span>
-            </div>
-            <div style={{fontSize:11,color:C.mt,marginTop:1}}>{opt.n}</div>
-          </div>
-          <div style={{fontSize:12,fontWeight:700,color:"#94a3b8"}}>{meal.kcal} kcal</div>
-        </button>
-        {isOpen&&<div style={{background:"#0a1628",border:"1px solid #1e3a5f",borderTop:"none",borderRadius:"0 0 9px 9px",padding:12}}>
-          <div style={{display:"flex",gap:5,marginBottom:9}}>
-            {meal.opts.map((o,oi2)=>(
-              <button key={oi2} onClick={()=>setOi({...oi,[mi]:oi2})} style={{
-                padding:"3px 11px",borderRadius:18,fontSize:11,border:"none",cursor:"pointer",
-                background:idx===oi2?C.bl:"#1e293b",color:idx===oi2?"#000":C.mt,fontWeight:idx===oi2?700:400}}>{o.n}</button>
-            ))}
-          </div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:9}}>
-            {opt.ing.map((ig,i)=><span key={i} style={{fontSize:11,padding:"3px 7px",background:"#1e293b",borderRadius:5,color:"#94a3b8"}}>{ig}</span>)}
-          </div>
-          <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6}}>{opt.prep}</div>
-          {opt.nj&&<div style={{marginTop:7,background:"#0f2a1a",border:"1px solid #14532d30",borderRadius:7,padding:"6px 10px",fontSize:11,color:C.gr,display:"flex",gap:7}}>
-            <span>🥷</span><span><b>Ninja:</b> {opt.nj}</span>
-          </div>}
-          <div style={{marginTop:7,fontSize:10,color:C.mt,fontFamily:"'DM Mono',monospace"}}>{opt.m}</div>
-        </div>}
-      </div>;
-    })}
-    {sub==="prep"&&<>
-      <div style={{background:"#0d2010",border:"1px solid #14532d",borderRadius:9,padding:"9px 12px",marginBottom:12,fontSize:12,color:"#86efac",lineHeight:1.6}}>
-        🥷 Ninja Batch · ~90 Min · reicht 5 Tage<br/><span style={{color:C.mt}}>Schritte 1 & 2 gleichzeitig starten!</span>
-      </div>
-      {PREP.map((step,i)=>{
-        const dk=done[i];
-        return <div key={i} style={{background:dk?"#0a1a0a":C.bg2,border:`1px solid ${dk?"#14532d":C.ln}`,borderRadius:9,padding:"10px 12px",marginBottom:6,opacity:dk?.65:1,transition:"all .2s"}}>
-          <div style={{display:"flex",gap:9,alignItems:"flex-start"}}>
-            <button onClick={()=>setDone({...done,[i]:!dk})} style={{
-              width:30,height:30,borderRadius:7,border:"none",flexShrink:0,
-              background:dk?"#14532d":"#1e293b",color:dk?C.gr:C.mt,fontSize:dk?13:16,
-              display:"flex",alignItems:"center",justifyContent:"center"}}>{dk?"✓":step.ic}</button>
-            <div style={{flex:1}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <div style={{fontSize:12,fontWeight:700,color:dk?C.mt:C.tx}}>{step.i}. {step.title}</div>
-                <span style={{fontSize:10,padding:"2px 6px",borderRadius:5,background:`${step.c}14`,color:step.c}}>{step.method}</span>
-              </div>
-              <div style={{fontSize:10,color:C.mt,marginTop:1}}>{step.qty}</div>
-              <div style={{marginTop:5,background:"#0f2a1a",borderRadius:5,padding:"4px 8px",fontSize:11,color:C.gr}}>🥷 {step.set}</div>
-              <div style={{fontSize:11,color:"#64748b",marginTop:4,lineHeight:1.5}}>💡 {step.tip}</div>
-            </div>
-          </div>
-        </div>;
-      })}
-    </>}
-  </div>;
-}
-
-// SUPPS
-function Supps(){
-  const [train,setTrain]=useState(true);
-  return <div>
-    <div style={{display:"flex",gap:0,marginBottom:14,background:C.bg2,borderRadius:8,padding:4,border:`1px solid ${C.ln}`}}>
-      {[[true,"🏋️ Trainingstag"],[false,"😴 Ruhetag"]].map(([v,l])=>(
-        <button key={String(v)} onClick={()=>setTrain(v)} style={{flex:1,padding:"7px",border:"none",cursor:"pointer",
-          borderRadius:6,fontSize:12,fontWeight:600,background:train===v?C.bl:"transparent",
-          color:train===v?"#000":C.mt,transition:"all .15s"}}>{l}</button>
-      ))}
-    </div>
-    <div style={{background:C.bg2,border:`1px solid ${C.ln}`,borderRadius:10,padding:"12px",marginBottom:13}}>
-      <div style={{fontSize:10,fontWeight:700,color:C.mt,marginBottom:9,textTransform:"uppercase",letterSpacing:"0.1em"}}>Tagesablauf</div>
-      {[
-        {t:"07:30",items:["Vitamin D3 + K2","Omega-3"],note:"mit Frühstück"},
-        ...(train?[{t:"17:00",items:["5g Kreatin","Pre-Workout Snack"],note:"Pre-Workout"}]:[{t:"12:00",items:["5g Kreatin"],note:"mit Mittagessen"}]),
-        ...(train?[{t:"19:15",items:["30g Whey (falls nötig)"],note:"Post-Training"}]:[]),
-        {t:"21:00",items:["Magnesium Glycinat 300mg","Zink 15mg"],note:"vor dem Schlafen"},
-      ].map((sl,i,arr)=>(
-        <div key={i} style={{display:"flex",gap:9,alignItems:"flex-start",padding:"6px 0",borderBottom:i<arr.length-1?"1px solid #1e293b":"none"}}>
-          <div style={{fontSize:11,color:C.bl,fontFamily:"'DM Mono',monospace",minWidth:38,fontWeight:700,marginTop:1}}>{sl.t}</div>
-          <div><div style={{fontSize:10,color:C.mt,marginBottom:2}}>{sl.note}</div>
-            {sl.items.map((it,j)=><div key={j} style={{fontSize:12,color:"#94a3b8"}}>→ {it}</div>)}
-          </div>
-        </div>
-      ))}
-    </div>
-    {SUPPS.map((sup,i)=>(
-      <div key={i} style={{background:C.bg2,border:`1px solid ${sup.c}22`,borderRadius:9,padding:"10px 12px",marginBottom:6}}>
-        <div style={{display:"flex",gap:9,alignItems:"flex-start"}}>
-          <div style={{width:34,height:34,borderRadius:7,flexShrink:0,background:`${sup.c}14`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16}}>{sup.ic}</div>
-          <div style={{flex:1}}>
-            <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:3}}>
-              <span style={{fontSize:13,fontWeight:700,color:C.tx}}>{sup.n}</span>
-              <span style={{fontSize:9,padding:"2px 5px",borderRadius:7,background:`${sup.c}14`,color:sup.c,fontWeight:700}}>{sup.p}</span>
-            </div>
-            <div style={{fontSize:11,color:sup.c,marginBottom:3}}>{sup.d} · {train?sup.tr:sup.re}</div>
-            <div style={{fontSize:11,color:"#64748b",lineHeight:1.5}}>{sup.w}</div>
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>;
-}
-
-// MAIN APP
-function App(){
-  const [unlocked,setUnlocked]=useState(()=>sessionStorage.getItem("nr_ok")==="1");
-  const [tab,setTab]=useState("dashboard");
-  const unlock=()=>{sessionStorage.setItem("nr_ok","1");setUnlocked(true);};
-  const lock=()=>{sessionStorage.removeItem("nr_ok");setUnlocked(false);};
-  if(!unlocked)return <Lock onUnlock={unlock}/>;
-  const tabs=[{id:"dashboard",ic:"📊",l:"Dashboard"},{id:"training",ic:"🏋️",l:"Training"},{id:"meals",ic:"🥗",l:"Ernährung"},{id:"supps",ic:"💊",l:"Supplements"}];
-  return <div style={{maxWidth:640,margin:"0 auto",minHeight:"100vh",display:"flex",flexDirection:"column"}}>
-    <div style={{padding:"18px 18px 0",background:"linear-gradient(180deg,#0d1420 0%,#090b0f 100%)",flexShrink:0}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
+function renderSession(){
+  const sess=SESSIONS[activeSession];
+  const nb=document.getElementById('session-note-box');
+  nb.style.background=sess.color+'10';
+  nb.style.border='1px solid '+sess.color+'30';
+  nb.textContent=sess.note;
+  const el=document.getElementById('exercise-list');
+  el.innerHTML=sess.exercises.map((ex,ei)=>{
+    const total=ex.sets;
+    const doneCount=Array.from({length:total},(_,si)=>checkedSets[activeSession+'|'+ei+'|'+si]?1:0).reduce((a,b)=>a+b,0);
+    const sets=Array.from({length:total},(_,si)=>{
+      const done=checkedSets[activeSession+'|'+ei+'|'+si];
+      return `<button class="set-btn ${done?'done':'undone'}" onclick="toggleSet(${ei},${si})" style="${done?'background:'+sess.color+';color:#000':''}">${done?'✓':si+1}</button>`;
+    }).join('');
+    return `<div class="ex-card${ex.priority?' priority':''}" style="${ex.priority?'border-color:'+sess.color+'40':''}">
+      <div class="ex-top">
         <div>
-          <div style={{fontFamily:"'DM Mono',monospace",fontSize:10,color:C.mt,letterSpacing:"0.2em",marginBottom:3}}>NICOLASROMIG.DE · PRIVAT</div>
-          <div style={{fontFamily:"'DM Serif Display',serif",fontSize:28,lineHeight:.92,color:C.tx,letterSpacing:"-0.02em"}}>
-            Fitness<br/><em style={{fontStyle:"italic",color:C.ac}}>Hub</em>
-          </div>
+          <div class="ex-name${ex.priority?' pri':''}" style="${ex.priority?'color:'+sess.color:''}">${ex.name}</div>
+          <div class="ex-meta">${total} Sätze · ${ex.reps} Wdh.${ex.note?' · '+ex.note:''}</div>
         </div>
-        <button onClick={lock} style={{padding:"5px 11px",borderRadius:7,border:`1px solid ${C.ln}`,background:"transparent",color:C.mt,fontSize:10,fontFamily:"'DM Mono',monospace",marginTop:4}}>
-          🔒 Sperren
-        </button>
+        <div class="ex-done" style="color:${doneCount===total?'var(--green)':'var(--muted)'}">${doneCount}/${total}</div>
       </div>
-      <div style={{display:"flex",gap:1,borderBottom:`1px solid ${C.ln}`}}>
-        {tabs.map(t=>(
-          <button key={t.id} onClick={()=>setTab(t.id)} style={{
-            flex:1,padding:"7px 3px",border:"none",cursor:"pointer",background:"none",
-            fontSize:9,fontWeight:600,display:"flex",flexDirection:"column",alignItems:"center",gap:2,
-            color:tab===t.id?C.tx:C.mt,
-            borderBottom:tab===t.id?`2px solid ${C.ac}`:"2px solid transparent",
-            letterSpacing:"0.03em",transition:"all .15s"}}>
-            <span style={{fontSize:17}}>{t.ic}</span>{t.l}
-          </button>
-        ))}
+      <div class="set-row">${sets}${doneCount===total?'<span class="done-label">✓ Fertig!</span>':''}</div>
+    </div>`;
+  }).join('');
+}
+function toggleSet(ei,si){
+  const key=activeSession+'|'+ei+'|'+si;
+  checkedSets[key]=!checkedSets[key];
+  renderSession();
+}
+function resetSets(){checkedSets={};renderSession();}
+
+// ── MEALS RENDER ──
+function renderMeals(){
+  // Meal cards
+  const mc=document.getElementById('meal-cards');
+  mc.innerHTML=MEALS.map((m,mi)=>{
+    const optIdx=mealOpts[mi]||0;
+    const opt=m.options[optIdx];
+    const isOpen=openMeal===mi;
+    const optTabs=m.options.map((o,oi)=>`<button class="opt-tab ${oi===optIdx?'active':'inactive'}" onclick="selectOpt(${mi},${oi})">${o.name}</button>`).join('');
+    const ings=opt.ingredients.map(i=>`<span class="ingredient">${i}</span>`).join('');
+    const ninjaHtml=opt.ninja?`<div class="ninja-tip">🥷 <span><strong>Ninja Combi:</strong> ${opt.ninja}</span></div>`:'';
+    return `<div class="meal-card">
+      <div class="meal-header${isOpen?' open':''}" onclick="toggleMeal(${mi})">
+        <div class="meal-icon-wrap">${m.icon}</div>
+        <div style="flex:1">
+          <div class="meal-time">${m.time}</div>
+          <div class="meal-name">${m.label}</div>
+          <div class="meal-macro" style="color:var(--green)">${opt.macro.split('·')[1].trim()}</div>
+        </div>
+        <div class="meal-kcal">${m.kcal} kcal</div>
+        <span class="meal-expand">▾</span>
       </div>
-    </div>
-    <div style={{flex:1,padding:"16px 18px 40px",overflowY:"auto"}}>
-      {tab==="dashboard"&&<Dashboard/>}
-      {tab==="training"&&<Training/>}
-      {tab==="meals"&&<MealsTab/>}
-      {tab==="supps"&&<Supps/>}
-    </div>
-  </div>;
+      <div class="meal-body${isOpen?' open':''}" id="meal-body-${mi}">
+        <div class="opt-tabs">${optTabs}</div>
+        <div class="ingredient-list">${ings}</div>
+        <div class="prep-text">${opt.prep}</div>
+        ${ninjaHtml}
+        <div class="macro-line">${opt.macro}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Prep steps
+  const ps=document.getElementById('prep-steps');
+  ps.innerHTML=PREP_STEPS.map((s,i)=>{
+    const done=doneSteps[i];
+    return `<div class="step-card${done?' done-card':''}">
+      <button class="step-check ${done?'done-chk':'undone'}" onclick="toggleStep(${i})">${done?'✓':s.icon}</button>
+      <div style="flex:1">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="step-title">${i+1}. ${s.title}</div>
+          <span class="step-dur" style="background:rgba(74,222,128,.1);color:var(--green)">${s.dur}</span>
+        </div>
+        <div class="step-qty">${s.qty}</div>
+        <div class="step-ninja">🥷 ${s.method}: ${s.settings}</div>
+        <div class="step-tip">💡 ${s.tip}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Storage
+  const sg=document.getElementById('storage-guide');
+  sg.innerHTML=STORAGE.map((s,i)=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;${i<STORAGE.length-1?'border-bottom:1px solid var(--line)':''}">
+      <span style="font-size:12px;color:var(--sub)">${s.item}</span>
+      <div style="text-align:right">
+        <span style="font-size:11px;color:var(--green);margin-right:8px">${s.days}</span>
+        <span style="font-size:10px;color:var(--muted)">${s.note}</span>
+      </div>
+    </div>`).join('');
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+function toggleMeal(mi){openMeal=openMeal===mi?null:mi;renderMeals();}
+function selectOpt(mi,oi){mealOpts[mi]=oi;renderMeals();}
+function toggleStep(i){doneSteps[i]=!doneSteps[i];renderMeals();}
+
+// ── SUPPLEMENTS RENDER ──
+function renderSupplements(){
+  renderSchedule();renderSuppCards();
+}
+function setTrainDay(t){
+  trainDay=t;
+  document.getElementById('tog-train').className='toggle-btn '+(t?'active':'inactive');
+  document.getElementById('tog-rest').className='toggle-btn '+(t?'inactive':'active');
+  renderSchedule();renderSuppCards();
+}
+function renderSchedule(){
+  const slots=trainDay?[
+    {time:'07:30',items:['Vitamin D3 + K2','Omega-3']},
+    {time:'17:00',items:['5g Kreatin','Pre-Workout Snack']},
+    {time:'19:15',items:['30g Whey (falls nötig)']},
+    {time:'21:00',items:['Magnesium Glycinat 300mg','Zink 15mg']},
+  ]:[
+    {time:'07:30',items:['Vitamin D3 + K2','Omega-3']},
+    {time:'12:00',items:['5g Kreatin (mit Mittag)']},
+    {time:'21:00',items:['Magnesium Glycinat 300mg','Zink 15mg']},
+  ];
+  document.getElementById('sched-list').innerHTML=slots.map(s=>`
+    <div class="schedule-row">
+      <span class="sched-time">${s.time}</span>
+      <div class="sched-items">${s.items.map(i=>`<div class="sched-item">→ ${i}</div>`).join('')}</div>
+    </div>`).join('');
+}
+function renderSuppCards(){
+  document.getElementById('supp-cards').innerHTML=SUPPLEMENTS.map(s=>`
+    <div class="supp-card" style="border:1px solid ${s.priColor}25">
+      <div class="supp-icon" style="background:${s.priColor}15">${s.icon}</div>
+      <div style="flex:1">
+        <div class="supp-name">${s.name} <span class="pri-badge" style="background:${s.priColor}20;color:${s.priColor};border:1px solid ${s.priColor}30">${s.priority}</span></div>
+        <div class="supp-timing" style="color:${s.priColor}">${s.dose} · ${trainDay?s.train:s.rest}</div>
+        <div class="supp-why">${s.why}</div>
+      </div>
+    </div>`).join('');
+}
 </script>
+
 </body>
 </html>
-<!-- deploy trigger-->
